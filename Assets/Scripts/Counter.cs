@@ -1,16 +1,19 @@
 using UnityEngine;
 using System;
 using System.Collections;
+using UnityEngine.UI;
 
 public class Counter : MonoBehaviour
 {
     [SerializeField, Min(1)] private int _value = 1;
     [SerializeField, Min(0)] private float _delay = 0.5f;
+    [SerializeField] private Button _button; 
 
     private int _startingValue = 0;
     private int _currentValue;
     private bool _isOn;
     private WaitForSecondsRealtime _wait;
+    private Coroutine _coroutine;
 
     public event Action ValueIncreased;
 
@@ -23,14 +26,19 @@ public class Counter : MonoBehaviour
         _wait = new WaitForSecondsRealtime(_delay);
     }
 
-    public void Interact()
+    private void Start()
+    {
+        _button.onClick.AddListener(Interact);
+    }
+
+    private void Interact()
     {
         _isOn = !_isOn;
 
         if (_isOn)
-            StartCoroutine(IncreaseValueWithDelay());
+            _coroutine = StartCoroutine(IncreaseValueWithDelay());
         else
-            StopCoroutine(IncreaseValueWithDelay());
+            StopCoroutine(_coroutine);
     }
 
     private IEnumerator IncreaseValueWithDelay()
