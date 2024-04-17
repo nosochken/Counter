@@ -45,9 +45,7 @@ public class Counter : MonoBehaviour
         else
         {
             if (_coroutine != null)
-            {
                 StopCoroutine(_coroutine);
-            }
         }
     }
 
