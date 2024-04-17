@@ -25,7 +25,6 @@ public class CounterView : MonoBehaviour
 
     private void DisplayCounterValue()
     {
-        _value = _counter.Value;
-        _valueView.text = _value.ToString();
+        _valueView.text = _counter.Value.ToString();
     }
 }

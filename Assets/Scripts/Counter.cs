@@ -11,8 +11,8 @@ public class Counter : MonoBehaviour
 
     private int _startingValue = 0;
     private int _currentValue;
+    private float _elapsedTime = 0;
     private bool _isOn;
-    private WaitForSecondsRealtime _wait;
     private Coroutine _coroutine;
 
     public event Action ValueIncreased;
@@ -22,8 +22,6 @@ public class Counter : MonoBehaviour
     private void Awake()
     {
         _currentValue = _startingValue;
-
-        _wait = new WaitForSecondsRealtime(_delay);
     }
 
     private void Start()
@@ -31,25 +29,42 @@ public class Counter : MonoBehaviour
         _button.onClick.AddListener(Interact);
     }
 
+    private void OnDestroy()
+    {
+        _button.onClick.RemoveListener(Interact);
+    }
+
     private void Interact()
     {
         _isOn = !_isOn;
 
         if (_isOn)
+        {
             _coroutine = StartCoroutine(IncreaseValueWithDelay());
+        }
         else
-            StopCoroutine(_coroutine);
+        {
+            if (_coroutine != null)
+            {
+                StopCoroutine(_coroutine);
+            }
+        }
     }
 
     private IEnumerator IncreaseValueWithDelay()
     {
         while (_isOn)
         {
-            _currentValue += _value;
+            _elapsedTime += Time.deltaTime;
 
-            ValueIncreased?.Invoke();
+            if (_elapsedTime > _delay)
+            {
+                _elapsedTime -= _delay;
+                _currentValue += _value;
+                ValueIncreased?.Invoke();
+            }
 
-            yield return _wait;
+            yield return null;
         }
     }
 }
